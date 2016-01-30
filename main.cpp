@@ -7,6 +7,31 @@
 
 using namespace std;
 
+void execute(char *a[], string c)
+{
+	pid_t pid = fork();
+	int status;
+
+	if (pid < 0)	// if pid is negative it's an error
+	{
+		cout << "Fork failed." << endl;
+	}
+	if (pid == 0)	// if pid == 0 then it's the child
+	{
+		//cout << "I am the child. " << getpid() << endl;
+		execvp(c.c_str(), a);
+		exit(0);
+	}
+
+	// must be parent usually it's like if pid > 0
+	waitpid(-1, &status, 0);	// lets the child do whatever it wants first
+	
+	//cout << "I am the parent." << endl;
+	//cout << "parent end." << endl;i
+	return;
+}
+
+
 int main()
 {
 	string cmd;
@@ -22,28 +47,11 @@ int main()
 	char *args1[] = {"ls", (char*) 0};	// this is just "ls" by itself
 	char *args[] = {"/bin/ls", "-a", (char *) 0};	// this is "ls -a"
 
-	// pid of parent
-	cout << "I am: " << getpid() << endl;
-	pid_t pid = fork();
-	
-	if (pid < 0)	// if pid is negative it's an error
+	while (cmd != "exit")
 	{
-		cout << "Fork failed." << endl;
+		cout << "$";
+		cin >> cmd;
+		execute(args, cmd);
 	}
-	if (pid == 0)	// if pid == 0 then it's the child
-	{
-		cout << "I am the child. " << getpid() << endl;
-		int test = execvp("ls", args);
-		if (test < 0)
-			cout << "Error: exec failed. " << endl;
-			return 1;
-		exit(0);
-	}
-
-	// must be parent usually it's like if pid > 0
-	waitpid(-1, &status, 0);	// lets the child do whatever it wants first
-	
-	cout << "I am the parent." << endl;
-	cout << "parent end." << endl;
 	return 0;
 }
