@@ -6,12 +6,13 @@ using namespace std;
 class Parser: public Shell_Base{
 	private:
 		string command;
-		//vector<string> cmd;
-		//vector<string> arg;
+		Shell_Base* bPtr;
 	public:
 		Parser(): command("") {};
 		~Parser();
 		Parser(string &c){command = c;};
+		void setCommand(string &c);
+		void setPtr(Shell_Base* ptr);
 		void parse();
 		void order();
 		void execute();

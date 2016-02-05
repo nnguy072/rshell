@@ -5,4 +5,6 @@ class Executer: public Shell_Base{
 				
 	public:
 		void execute();
+		void printCmd();
+		void printArg();
 };

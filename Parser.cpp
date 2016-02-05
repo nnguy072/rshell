@@ -8,6 +8,11 @@ Parser::~Parser()
 	// nothing
 }
 
+void Parser::setCommand(string &c)
+{
+	command = c;
+}
+
 void Parser::parse()
 {
 	vector<string> temp;
@@ -82,7 +87,7 @@ void Parser::parse()
 
 void Parser::execute()
 {
-	cout << "do execute()" << endl;
+	bPtr->execute();
 }
 
 void Parser::printCommand()
@@ -102,4 +107,9 @@ void Parser::printArg()
 	cout << "Arg in Parser: " << endl;
 	for (unsigned int i = 0; i < arg.size(); i++)
 		cout << arg.at(i) << endl;
+}
+
+void Parser::setPtr(Shell_Base* ptr)
+{
+	bPtr = ptr;
 }

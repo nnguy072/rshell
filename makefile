@@ -1,7 +1,10 @@
 FLAGS = -Wall -Werror -ansi -pedantic
 
-main: Main.cpp Executer.o Parser.o Shell_Base.o
+main: Main.cpp clear Executer.o Parser.o Shell_Base.o
 	g++ $(FLAGS) Main.cpp Executer.o Parser.o Shell_Base.o
+
+clear:
+	clear
 
 Shell_Base.o: Shell_Base.cpp Shell_Base.h
 	g++ $(FLAGS) -c Shell_Base.cpp Shell_Base.h
