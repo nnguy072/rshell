@@ -1,5 +1,4 @@
 #include "Shell_Base.h"
-#include <vector>
 #include <iostream>
 using namespace std;
 
@@ -15,6 +14,7 @@ class Parser: public Shell_Base{
 		void setPtr(Shell_Base* ptr);
 		void parse();
 		void order();
+		char* convert(const string &s);
 		void execute();
 		void printCommand();
 		void printCmd();

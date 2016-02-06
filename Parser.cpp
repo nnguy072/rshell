@@ -1,6 +1,7 @@
 #include "Parser.h"
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <string.h>
 using namespace std;
 
 Parser::~Parser()
@@ -13,6 +14,13 @@ void Parser::setCommand(string &c)
 	command = c;
 }
 
+char* Parser::convert(const string &s)
+{
+	char *c = new char[s.size() +1];
+	strcpy(c, s.c_str());
+	return c;
+}
+
 void Parser::parse()
 {
 	vector<string> temp;
@@ -23,6 +31,7 @@ void Parser::parse()
 	// parse command using boost library
 	boost::split(temp, command, boost::is_any_of(" "));
 
+	cout << "works here #1" << endl;
 	while (k < temp.size())
 	{
 		// goes through loop until it sees a connector
@@ -73,14 +82,17 @@ void Parser::parse()
 			}
 		}
 		// adds single command as an element in CMD
-		cmd.push_back(temp2);
+		// TODO: convert string -> c_string then push into vector
+		cmd.push_back(convert(temp2));
 		// clears to reset
 		temp2.clear();
 	}
+	cmd.push_back(NULL);
 
 	// using to test to see what is stored in cmd
-	//for (unsigned int i = 0; i < cmd.size(); i++)
-	//	cout << cmd.at(i) << endl;
+	cout << "Parser loop: " << endl;
+	for (unsigned int i = 0; i < cmd.size(); i++)
+		cout << cmd[i] << endl;
 
 	return;
 }
@@ -105,8 +117,8 @@ void Parser::printCmd()
 void Parser::printArg()
 {
 	cout << "Arg in Parser: " << endl;
-	for (unsigned int i = 0; i < arg.size(); i++)
-		cout << arg.at(i) << endl;
+	//for (unsigned int i = 0; i < arg.size(); i++)
+	//	cout << arg.at(i) << endl;
 }
 
 void Parser::setPtr(Shell_Base* ptr)
