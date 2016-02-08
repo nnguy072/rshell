@@ -7,7 +7,7 @@ using namespace std;
 class Shell_Base
 {
 	protected:
-		vector<char *> cmd;
+		static vector<char *> cmd;
 	public:
 		virtual void execute() = 0;
 		virtual void printCmd() = 0;

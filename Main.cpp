@@ -7,9 +7,9 @@ using namespace std;
 int main()
 {
 	string cmd;
-	cout << "$";
+	cout << "$ ";
 	getline(cin, cmd);
-	
+
 	Executer e;
 	Parser p = Parser(cmd);
 	p.setPtr(&e);
