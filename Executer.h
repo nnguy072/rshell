@@ -7,4 +7,5 @@ class Executer: public Shell_Base{
 		void execute();
 		void printCmd();
 		void printArg();
+		char* convert(const string& s);
 };

@@ -1,14 +1,73 @@
 #include "Executer.h"
+#include <string>
 #include <iostream>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <boost/algorithm/string.hpp>
 using namespace std;
+
+char* Executer::convert(const string &s)
+{
+	char* c = new char[s.size() + 1];
+	strcpy(c, s.c_str());
+	return c;
+}
 
 
 void Executer::execute()
 {	
-	char** arg = &cmd[0];
+	vector<char*> vCStr;
+	string tempStr = cmd.at(0);
+	string tempStr2 = "";
+	vector<string> tempV;
+	unsigned int k = 0;
+	//int counter = 1;
+
+	boost::split(tempV, tempStr, boost::is_any_of(" "));
+	while(k < tempV.size())
+	{
+		for(unsigned int i = 0; i < tempV.size(); i++)
+		{
+			if(tempV.at(i).find(";") != string::npos)
+			{
+				if(tempStr2.empty())
+				{
+					tempStr2 = tempV.at(i);
+					tempStr2 = tempStr2.substr(0, tempStr2.size() - 1);
+				}
+				else
+				{
+					tempStr2 = tempStr2 + " " + tempV.at(i);
+					tempStr2 = tempStr2.substr(0, tempStr2.size() - 1);
+				}
+				i++;
+				k++;
+				break;
+			}
+			else if((tempV.at(i) == "||") || (tempV.at(i) == "&&"))
+			{
+				i++;
+				k++;
+				break;
+			}
+			else if(tempStr2.empty())
+			{
+				k++;
+				tempStr2 += tempV.at(i);
+			}
+			else
+			{
+				k++;
+				tempStr2 = tempStr2 + " " + tempV.at(i);
+			}
+		}
+	}
+	for(unsigned int i = 0; i < tempV.size(); i++)
+	{
+		vCStr.push_back(convert(tempV.at(i).c_str()));
+	}
+	char** arg = &vCStr.at(0);
 
 	int status;
 	pid_t pid = fork();
