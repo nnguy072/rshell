@@ -88,8 +88,8 @@ void Parser::parse()
 	cmd.push_back(NULL);
 
 	// using to test to see what is stored in cmd
-	for (unsigned int i = 0; i < cmd.size() - 1; i++)
-		cout << cmd[i] << endl;
+	//for (unsigned int i = 0; i < cmd.size() - 1; i++)
+	//	cout << cmd[i] << endl;
 
 	return;
 }

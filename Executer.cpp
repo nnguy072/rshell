@@ -8,6 +8,12 @@ using namespace std;
 
 void Executer::execute()
 {	
+	vector<char*> test = cmd;
+	
+	cout << "displaying stuff in test: " << endl;
+	for(unsigned int i = 0; i < test.size() - 1; i++)
+		cout << i << " " << test.at(i) << endl;
+
 	char** arg = &cmd[0];
 
 	int status;
