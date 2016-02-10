@@ -81,11 +81,11 @@ void Parser::parse()
 		}
 		// adds single command as an element in CMD
 		// TODO: convert string -> c_string then push into vector
-		cmd.push_back(convert(temp2));
+		cmd.push_back(temp2);
 		// clears to reset
 		temp2.clear();
 	}
-	cmd.push_back(NULL);
+//	cmd.push_back(NULL);
 
 	// using to test to see what is stored in cmd
 	for (unsigned int i = 0; i < cmd.size() - 1; i++)
