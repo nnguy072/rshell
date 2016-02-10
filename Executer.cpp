@@ -19,7 +19,7 @@ void Executer::execute()
 	}
 	if(pid == 0)
 	{
-		cout << "I am the child" << endl;
+//		cout << "I am the child" << endl;
 		if (execvp(arg[0], arg) < 0)
 		{
 			cout << "execvp failed." << endl;

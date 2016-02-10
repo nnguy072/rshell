@@ -30,8 +30,6 @@ void Parser::parse()
 
 	// parse command using boost library
 	boost::split(temp, command, boost::is_any_of(" "));
-
-	cout << "works here #1" << endl;
 	while (k < temp.size())
 	{
 		// goes through loop until it sees a connector
@@ -90,8 +88,7 @@ void Parser::parse()
 	cmd.push_back(NULL);
 
 	// using to test to see what is stored in cmd
-	cout << "Parser loop: " << endl;
-	for (unsigned int i = 0; i < cmd.size(); i++)
+	for (unsigned int i = 0; i < cmd.size() - 1; i++)
 		cout << cmd[i] << endl;
 
 	return;
