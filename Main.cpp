@@ -9,12 +9,15 @@ int main()
 	string cmd;
 	cout << "$ ";
 	getline(cin, cmd);
-
+	//cout << "hi" << endl;
 	Executer e;
+	//cout << "1" << endl;
 	Parser p = Parser(cmd);
+	//cout << "2" << endl;
 	p.setPtr(&e);
+	//cout << "3" << endl;
 	p.parse();
-	
+	//cout << "4" << endl;
 	// testing functions (these work)
 	//p.printCmd();
 	//p.printCommand();
@@ -25,7 +28,9 @@ int main()
 	//p1.printCommand();
 	
 	Shell_Base* b = &p;
+	//cout << "5" << endl;
 	b->execute();
+	//cout << "6" << endl;
 
 	// testing list of arguments
 	// TODO: learn how to fix this error with these things vvv
