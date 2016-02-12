@@ -8,4 +8,5 @@ class Executer: public Shell_Base{
 		void printCmd();
 		void printArg();
 		char* convert(const string& s);
+		void vectorDestructor(vector<char*> v);
 };
