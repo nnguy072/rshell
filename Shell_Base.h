@@ -9,6 +9,7 @@ class Shell_Base
 	protected:
 		static vector<string> cmd;
 	public:
+		void clear();
 		virtual void execute() = 0;
 		virtual void printCmd() = 0;
 		virtual void printArg() = 0;

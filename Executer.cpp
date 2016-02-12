@@ -14,9 +14,16 @@ char* Executer::convert(const string &s)
 	return c;
 }
 
-void Executer::makeArgs()
-{
 	
+void Executer::vectorDestructor(vector<char*> v)
+{
+	for(unsigned int i = 0; i < v.size(); i++)
+	{
+		//deletes char* in each element of the vector
+		delete []v.at(i);
+	}
+	//to make sure objects are destructed and makes vector size 0
+	v.clear();
 }
 
 void Executer::execute()
@@ -88,7 +95,9 @@ void Executer::execute()
 			cout << "execvp failed." << endl;
 		}
 	}
+	vectorDestructor(vCStr);
 	waitpid(-1, &status, 0);
+	//vectorDestructor(vCStr); doesnt seem to make a difference to the exit bug if before/after waitpid
 
 	return;
 }
