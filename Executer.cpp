@@ -14,7 +14,6 @@ char* Executer::convert(const string &s)
 	return c;
 }
 
-	
 void Executer::vectorDestructor(vector<char*> v)
 {
 	for(unsigned int i = 0; i < v.size(); i++)
@@ -74,6 +73,7 @@ void Executer::execute()
 			}
 		}
 	}
+
 	for(unsigned int i = 0; i < tempV.size(); i++)
 	{
 		vCStr.push_back(convert(tempV.at(i).c_str()));
@@ -94,6 +94,7 @@ void Executer::execute()
 		{
 			cout << "execvp failed." << endl;
 		}
+		exit(0);
 	}
 	vectorDestructor(vCStr);
 	waitpid(-1, &status, 0);

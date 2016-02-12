@@ -9,7 +9,6 @@ int main()
 	string cmd;
 	cout << "$ ";
 	getline(cin, cmd);
-
 	while(cmd != "exit")
 	{
 		Executer e;
@@ -18,7 +17,7 @@ int main()
 		p.parse();
 		
 		Shell_Base* b = &p;
-		b->execute();
+		//b->execute();
 		b->clear();
 
 		cout << "$ ";
