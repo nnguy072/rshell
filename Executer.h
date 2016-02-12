@@ -8,7 +8,7 @@ class Executer: public Shell_Base{
 	public:
 		Executer();
 		Executer(int i);
-		void execute();
+		int execute();
 		void setCount(const int& i);
 		int getCount();
 		char** makeArg(vector<char*>& v, const int &index);

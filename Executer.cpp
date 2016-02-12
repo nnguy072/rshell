@@ -97,16 +97,23 @@ char** Executer::makeArg(vector<char*>& v,const int &index)
 	return arg;
 }
 
-void Executer::execute()
+// executes 1 single function
+// return value: returns 0 if execvp was succesful
+//               or 149 if it failed
+//               or -1 if "exit" was entered 
+int Executer::execute()
 {
 	vector<char*> vCStr;
-	cout << "number is: " << getCount() << endl;
+	// if the next command is "exit" then return -1
+	if (cmd.at(getCount()).find("exit") != string::npos)
+	{
+		return -1;
+	}
 	char** arg = makeArg(vCStr, getCount());
-
 	int status;
 	// makes a child function
 	pid_t pid = fork();
-
+	
 	// if pid is negative something went wrong
 	if(pid < 0)
 	{
@@ -122,14 +129,15 @@ void Executer::execute()
 			// same error as the normal terminal
 			// "-bash: <command>: command not found"
 			cout << "-bash: " << arg[0] << ": command not found" << endl;
+			_exit(149); // if execvp fails to work, return vale is 149
 		}
-		// stops the child process
-		exit(0);
+		_exit(0);	// stops child process w/ return value of 0
 	}
 	vectorDestructor(vCStr);
 	// waitpid lets the child process do it's thing
 	// before the parent continues again
 	waitpid(-1, &status, 0);
-
-	return;
+	int childReturnValue = WEXITSTATUS(status);
+	
+	return childReturnValue;
 }

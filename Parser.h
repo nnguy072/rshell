@@ -13,7 +13,7 @@ class Parser: public Shell_Base{
 		void setCommand(string &c);
 		void setPtr(Shell_Base* ptr);
 		void parse();
-		void execute();
+		int execute();
 		void printCommand();
 		void setCount(const int& i);
 };

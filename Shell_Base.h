@@ -10,7 +10,7 @@ class Shell_Base
 		static vector<string> cmd;
 	public:
 		void clear();
-		virtual void execute() = 0;
+		virtual int execute() = 0;
 };
 
 #endif
