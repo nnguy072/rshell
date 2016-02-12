@@ -17,7 +17,7 @@ int main()
 		p.parse();
 		
 		Shell_Base* b = &p;
-		//b->execute();
+		b->execute();
 		b->clear();
 
 		cout << "$ ";

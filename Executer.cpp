@@ -7,6 +7,26 @@
 #include <boost/algorithm/string.hpp>
 using namespace std;
 
+Executer::Executer()
+{
+	// does nothing
+}
+
+Executer::Executer(int i)
+{
+	count = i;
+}
+
+void Executer::setCount(const int& i)
+{
+	count = i;
+}
+
+int Executer::getCount()
+{
+	return count;
+}
+
 char* Executer::convert(const string &s)
 {
 	char* c = new char[s.size() + 1];
@@ -14,7 +34,7 @@ char* Executer::convert(const string &s)
 	return c;
 }
 
-void Executer::vectorDestructor(vector<char*> v)
+void Executer::vectorDestructor(vector<char*>& v)
 {
 	for(unsigned int i = 0; i < v.size(); i++)
 	{
@@ -25,94 +45,91 @@ void Executer::vectorDestructor(vector<char*> v)
 	v.clear();
 }
 
-void Executer::execute()
-{	
-	vector<char*> vCStr;
-	string tempStr = cmd.at(0);
-	string tempStr2 = "";
+char** Executer::makeArg(vector<char*>& v,const int &index)
+{
+	string tempStr = cmd.at(index);
+	string tempStr2;
 	vector<string> tempV;
-	unsigned int k = 0;
-	//int counter = 1;
 
+	// using boost library we split tempStr(holds a single command i.g. cmd.at(0))
+	// seperates something like "ls -a -l" into "ls" "-a" "-l" and puts it into a vec
 	boost::split(tempV, tempStr, boost::is_any_of(" "));
-	while(k < tempV.size())
+
+	// since echo sometimes has a sentence as a second argument
+	// we need to do something different
+	if (tempV.at(0) == "echo")
 	{
-		for(unsigned int i = 0; i < tempV.size(); i++)
+		// pushes back first element "echo"
+		v.push_back(convert(tempV.at(0).c_str()));
+		// for all the arguments put them together into a big string
+		// then use that as a second "argument" for echo
+		for (unsigned int i = 1; i < tempV.size(); i++)
 		{
-			if(tempV.at(i).find(";") != string::npos)
+			if (tempStr2.empty())
 			{
-				if(tempStr2.empty())
-				{
-					tempStr2 = tempV.at(i);
-					tempStr2 = tempStr2.substr(0, tempStr2.size() - 1);
-				}
-				else
-				{
-					tempStr2 = tempStr2 + " " + tempV.at(i);
-					tempStr2 = tempStr2.substr(0, tempStr2.size() - 1);
-				}
-				i++;
-				k++;
-				break;
-			}
-			else if((tempV.at(i) == "||") || (tempV.at(i) == "&&"))
-			{
-				i++;
-				k++;
-				break;
-			}
-			else if(tempStr2.empty())
-			{
-				k++;
-				tempStr2 += tempV.at(i);
+				tempStr2 = tempV.at(i);
 			}
 			else
 			{
-				k++;
 				tempStr2 = tempStr2 + " " + tempV.at(i);
 			}
 		}
+		v.push_back(convert(tempStr2.c_str()));
 	}
-
-	for(unsigned int i = 0; i < tempV.size(); i++)
+	else
 	{
-		vCStr.push_back(convert(tempV.at(i).c_str()));
+		// for each element convert from string -> const char* -> char*
+		// store into vCStr
+		for(unsigned int i = 0; i < tempV.size(); i++)
+		{
+			v.push_back(convert(tempV.at(i).c_str()));
+		}
 	}
-	char** arg = &vCStr.at(0);
+	// ADD NULL at the end needed for execvp
+	v.push_back(NULL);
+
+	// takes pointer to vector
+	// and assigns it char* array pointer
+	// in what i think is converting from vector to array
+	// w/o having to copy each element
+	char** arg = &v.at(0);
+	
+	return arg;
+}
+
+void Executer::execute()
+{
+	vector<char*> vCStr;
+	cout << "number is: " << getCount() << endl;
+	char** arg = makeArg(vCStr, getCount());
 
 	int status;
+	// makes a child function
 	pid_t pid = fork();
 
+	// if pid is negative something went wrong
 	if(pid < 0)
 	{
 		cout << "Fork failed." << endl;
 	}
+	// pid == 0 is the child
 	if(pid == 0)
 	{
-//		cout << "I am the child" << endl;
+		// does whatever child needs to do
+		//cout << "I am the child" << endl;
 		if (execvp(arg[0], arg) < 0)
 		{
-			cout << "execvp failed." << endl;
+			// same error as the normal terminal
+			// "-bash: <command>: command not found"
+			cout << "-bash: " << arg[0] << ": command not found" << endl;
 		}
+		// stops the child process
 		exit(0);
 	}
 	vectorDestructor(vCStr);
+	// waitpid lets the child process do it's thing
+	// before the parent continues again
 	waitpid(-1, &status, 0);
-	//vectorDestructor(vCStr); doesnt seem to make a difference to the exit bug if before/after waitpid
 
 	return;
-}
-
-void Executer::printArg()
-{
-	cout << "Exeuter::printArg(): ";
-	//for(unsigned int i = 0; i < arg.size(); i++)
-	//	cout << arg[i] << endl;
-}
-
-void Executer::printCmd()
-{
-	cout << "Executer::printCmd: ";
-	for(unsigned int i = 0; i < cmd.size(); i++)
-		cout << cmd.at(i) << endl;
 }

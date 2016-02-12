@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 #include <string.h>
+#include "Executer.h"
 using namespace std;
 
 Parser::~Parser()
@@ -12,13 +13,6 @@ Parser::~Parser()
 void Parser::setCommand(string &c)
 {
 	command = c;
-}
-
-char* Parser::convert(const string &s)
-{
-	char *c = new char[s.size() +1];
-	strcpy(c, s.c_str());
-	return c;
 }
 
 void Parser::parse()
@@ -166,36 +160,29 @@ void Parser::parse()
 	}
 
 	// using to test to see what is stored in cmd
-	cout << "cmd vector in Parser after parse: " << endl;
-	
-	for (unsigned int i = 0; i < cmd.size(); i++)
-		cout << cmd.at(i) << endl;
+	//cout << "cmd vector in Parser after parse: " << endl;
+	//for (unsigned int i = 0; i < cmd.size(); i++)
+	//	cout << cmd.at(i) << endl;
 
 	return;
 }
 
 void Parser::execute()
 {
+	// If I use my imagination hard enough
+	// this will magically work
+	int num = 0;
+	Executer E;
+	cout << "GIVE ME A NUMBER: ";
+	cin >> num;
+	E.setCount(num);
+	this->bPtr = &E;
 	bPtr->execute();
 }
 
 void Parser::printCommand()
 {
 	cout << "Command in Parser: " << command << endl;
-}
-
-void Parser::printCmd()
-{
-	cout << "Cmd in Parser: " << endl;
-	for (unsigned int i = 0; i < cmd.size(); i++)
-		cout << cmd.at(i) << endl;
-}
-
-void Parser::printArg()
-{
-	cout << "Arg in Parser: " << endl;
-	//for (unsigned int i = 0; i < arg.size(); i++)
-	//	cout << arg.at(i) << endl;
 }
 
 void Parser::setPtr(Shell_Base* ptr)
