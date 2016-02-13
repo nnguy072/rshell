@@ -14,6 +14,7 @@ class Parser: public Shell_Base{
 		void setPtr(Shell_Base* ptr);
 		void parse();
 		int execute();
+		bool isOdd(unsigned int i);
 		void printCommand();
 		void setCount(const int& i);
 };

@@ -236,7 +236,10 @@ int Parser::execute()
 		setCommand(cmd);
 		parse();
 	}
-	
+
+	//for(unsigned int i = 0; i < cmd.size(); i++)
+	//	cout << i << ": " << cmd.at(i) << endl;
+
 	// this loop analyzes the connectors
 	// and determines what gets runned
 	while(i < cmd.size())
@@ -245,49 +248,75 @@ int Parser::execute()
 		this->bPtr = &E;		
 
 		status = bPtr->execute();			
-		if(status == -1)
+		if(status == -1)		// if status is -1 then "exit was inputted"
+		{						// so we want to exit rshell program
+			return status;
+		}
+		//cout << "hi" << endl;
+		// should on on connector now
+		// b/c connectors are on odd numbers
+		i++;	
+		
+		//cout << "i:" << i << endl;
+		if(i >= cmd.size())
 		{
 			return status;
 		}
 
-		// i + 1 is inbound
-		if(((i + 1) < cmd.size()) &&
-		   (cmd.size() > 3))						// execute() will have 3 different return value
-		{											// -1 if there is an "exit"
-			// next connector is ;					// 0 if it ran correctly, or 149 if it failed
-			if(cmd.at(i + 1) == ";")				// "it" being execvp 
-			{								
-				i += 2; 							// i+=2 b/c i++ would give us a connector
-			}
-			// next connector is &&
-			else if(cmd.at(i + 1) == "&&")
+		if(cmd.at(i) == ";")
+		{
+			//cout << "Before i++" << endl;
+			i++;
+			//cout << "After i++" << endl;
+		}
+		// if next one is && move to the next one if 
+		// previous worked
+		else if(cmd.at(i) == "&&")
+		{
+			// if previous worked
+			if(status == 0)
 			{
-				// if previous worked
-				if(status == 0)
-					i += 2;	 // go to the next command
-				else
-				{
-					// not sure yet
-				}
+				i++;	 // go to the next command
 			}
-			else if(cmd.at(i + 1) == "||")
+			else
 			{
-				// if previous failed
-				if(status == 149)
-				{
-					i += 2;	// go to the next command
-				}
-				else
-				{
-					// not sure yet
-				}
+				i+=3;   // moves on to next connector		
 			}
 		}
-		i+=2;
+		else if(cmd.at(i) == "||")
+		{
+			// if previous failed
+			if(status == 149)
+			{
+				i++;	// go to the next command
+			}
+			else
+			{
+				i+=3;
+			}
+		}
+
+		//cout << "i after everything: " << i << endl;
+		if(isOdd(i) || i > cmd.size())
+		{
+			//cout << "goes here" << endl;
+			return status;
+		}
 	}	
 	return status;
 }
 
+bool Parser::isOdd(unsigned int i)
+{
+	if((i % 2) == 0)
+	{
+		return false;
+	}	
+	else
+	{
+		return true;
+	}
+}
 void Parser::printCommand()
 {
 	cout << "Command in Parser: " << command << endl;
