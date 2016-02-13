@@ -5,7 +5,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <boost/algorithm/string.hpp>
+#include <cstdio>
 using namespace std;
+
 
 Executer::Executer()
 {
@@ -117,13 +119,14 @@ int Executer::execute()
 	// if pid is negative something went wrong
 	if(pid < 0)
 	{
-		cout << "Fork failed." << endl;
+		perror("Fork failed");
 	}
 	// pid == 0 is the child
 	if(pid == 0)
 	{
 		// does whatever child needs to do
 		//cout << "I am the child" << endl;
+		// execvp will return -1 if execvp failed to execute
 		if (execvp(arg[0], arg) < 0)
 		{
 			// same error as the normal terminal

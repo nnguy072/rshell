@@ -7,9 +7,14 @@ using namespace std;
 int main()
 {
 	string cmd;
-	cout << "$ ";
-	getline(cin, cmd);
 	int status;
+
+	do
+	{
+		cout << "$ ";
+		getline(cin, cmd);
+	}while(cmd.empty() || (cmd.find("#") == 0));
+
 	while(cmd != "exit")
 	{
 		Executer e;
