@@ -1,11 +1,12 @@
 #include "Shell_Base.h"
 #include "Parser.h"
 #include "Executer.h"
-
+//#include <unistd.h>
 using namespace std;
 
 int main()
 {
+	//string* loginName = getlogin();
 	string cmd;
 	int status;
 
