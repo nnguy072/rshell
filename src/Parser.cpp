@@ -17,8 +17,9 @@ void Parser::setCommand(string &c)
 
 void Parser::parse()
 {
-	vector<string> temp;
-	string temp2;
+	vector<string> temp;			// vector that holds original command
+	string temp2;					// used to hold individual words that i parsed to push into temp
+	//string temp3;					// used for the case "hello;hello" when connector is in the middle
 	unsigned int i = 0;				// keeps track of for loop inside
 	unsigned int k = 0;				// keeps track of while loop
 	
@@ -27,6 +28,7 @@ void Parser::parse()
 	bool isSemiColon = false;
 	bool isLine = false;
 	bool isAmpersand = false;
+	bool midConnector = false;
 	// parse command using boost library
 	boost::split(temp, command, boost::is_any_of(" "));
 
@@ -100,69 +102,82 @@ void Parser::parse()
 				// and put everything(will note as "THIS")
 				// into the "else" statement
 				// --------------------------------------
-				
-
-				// ALLLL THISSSSSSSSSSSSSSSSSSSSS IN THE "ELSE" branch
-				// -----------------------------------------------------------
-				// if empty and ";" remove the ";" and
-				// make a note to push ";" after temp2
-				if((temp2.empty()) && (temp[i].find(";") != string::npos))
+				if((temp[i].find(";") != 0 && temp[i].find(";") != temp.size() - 1))
 				{
-					temp2 = temp[i];
-					if(temp2.size() != 1)
-					{
-						temp2 = temp2.substr(0, temp2.size() - 1);
-					}
-					isSemiColon = true;
-				}
-				// if it's empty and "||" or "&&"; remove them
-				// and then push back || or &&
-				else if((temp2.empty()) && ((temp[i].find("||") != string::npos) ||
-					                        (temp[i].find("&&") != string::npos)))
-				{
-					temp2 = temp[i];
-					if(temp2.size() != 2)
-					{
-						temp2 = temp2.substr(0, temp2.size() - 1);
-						temp2 = temp2.substr(0, temp2.size() - 1);
-					}
-					// makes a note if it's a || or &&
-					if (temp[i].find("||") != string::npos)
-					{
-						isLine = true;
-					}
-					else
-					{
-						isAmpersand = true;
-					}
-				}
-				// if string is not empty
-				else if((temp[i].find("||") != string::npos) ||
-					    (temp[i].find("&&") != string::npos))
-				{
-					temp2 = temp2 + " " + temp[i];
-					// got to get rid of the "||" or "||"
-					temp2 = temp2.substr(0, temp2.size() - 1);
-					temp2 = temp2.substr(0, temp2.size() - 1);
-					if (temp[i].find("||") != string::npos)
-					{
-						isLine = true;
-					}
-					else
-					{
-						isAmpersand = true;
-					}
+					//RODNEY TODO:
+					string temp3;
+					// if user puts "ls -a;echo hello"
+					// temp2 will have ls and temp3 will hold the -a then concat them together
+					int pos = temp[i].find(";");
+					
+					cout << "THIS IS TEMP: " << temp2 << endl;
+					cout << "Goes in here" << endl;
+					cout << "What is in cmd" << endl;
 				}
 				else
 				{
-					temp2 = temp2 + " " + temp[i];
-					temp2 = temp2.substr(0, temp2.size() - 1);
-					isSemiColon = true;
+					// ALLLL THISSSSSSSSSSSSSSSSSSSSS IN THE "ELSE" branch
+					// -----------------------------------------------------------
+					// if empty and ";" remove the ";" and
+					// make a note to push ";" after temp2
+					if((temp2.empty()) && (temp[i].find(";") != string::npos))
+					{
+						temp2 = temp[i];
+						if(temp2.size() != 1)
+						{
+							temp2 = temp2.substr(0, temp2.size() - 1);
+						}
+						isSemiColon = true;
+					}
+					// if it's empty and "||" or "&&"; remove them
+					// and then push back || or &&
+					else if((temp2.empty()) && ((temp[i].find("||") != string::npos) ||
+					                        	(temp[i].find("&&") != string::npos)))
+					{
+						temp2 = temp[i];
+						if(temp2.size() != 2)
+						{
+							temp2 = temp2.substr(0, temp2.size() - 1);
+							temp2 = temp2.substr(0, temp2.size() - 1);
+						}
+						// makes a note if it's a || or &&
+						if (temp[i].find("||") != string::npos)
+						{
+							isLine = true;
+						}
+						else
+						{
+							isAmpersand = true;
+						}
+					}
+					// if string is not empty
+					else if((temp[i].find("||") != string::npos) ||
+					    	(temp[i].find("&&") != string::npos))
+					{
+						temp2 = temp2 + " " + temp[i];
+						// got to get rid of the "||" or "||"
+						temp2 = temp2.substr(0, temp2.size() - 1);
+						temp2 = temp2.substr(0, temp2.size() - 1);
+						if (temp[i].find("||") != string::npos)
+						{
+							isLine = true;
+						}
+						else
+						{
+							isAmpersand = true;
+						}
+					}
+					else
+					{
+						temp2 = temp2 + " " + temp[i];
+						temp2 = temp2.substr(0, temp2.size() - 1);
+						isSemiColon = true;
+					}
+					k++;
+					i++;
+					break;
+					// ----------------------------------------------------
 				}
-				k++;
-				i++;
-				break;
-				// ----------------------------------------------------
 			}
 			else
 			{
