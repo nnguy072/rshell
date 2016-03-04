@@ -18,6 +18,7 @@ void Parser::setCommand(string &c)
 void Parser::parse()
 {
 	vector<string> temp;			// vector that holds original command
+	vector<string> test;			// vector that holds things to be tested
 	string temp2;					// used to hold individual words that i parsed to push into temp
 	//string temp3;					// used for the case "hello;hello" when connector is in the middle
 	unsigned int i = 0;				// keeps track of for loop inside
@@ -28,7 +29,6 @@ void Parser::parse()
 	bool isSemiColon = false;
 	bool isLine = false;
 	bool isAmpersand = false;
-	bool midConnector = false;
 	// parse command using boost library
 	boost::split(temp, command, boost::is_any_of(" "));
 
@@ -68,6 +68,42 @@ void Parser::parse()
 		temp[temp.size() - 1] = temp[temp.size() - 1].substr(0, index);
 	}
 
+	// checks for tests
+	unsigned n = 0;
+	for (; n < temp.size(); n++)
+	{
+		if (temp[n] == "test")
+		{
+			while ((temp[n] != "&&") || (temp[n] != ";") || (temp[n] != "||") || (temp[n] != "\n"))
+			{
+				temp.push_back(temp[n]);
+				n++;
+			}
+			cout << "finishes this i ugess" << endl;
+		}
+		// checks for brackets
+		if (temp[n] == "[")
+		{
+			// gets everything until the end of the bracket
+			while(temp[n] != "]")
+			{
+				cout << temp[n] << " is being pushed." << endl;
+				test.push_back(temp[n]);
+				cout << temp[n] << " has been pushed." << endl;
+				n++;
+			}
+			test.push_back(temp[n]);	// includes the closing "]"
+			n++;						// increment so n is position after the closing bracket
+		}
+	}
+
+	cout << "This is what is in testing" << endl;
+	for (unsigned int i = 0; i <test.size(); i++)
+		cout << test[i] << endl;
+	
+	cout << "-------------------------" << endl;
+	
+	k = i = n;
 	// loop will eventually put a single command
 	// in one element in cmd
 	// i.g. user puts "ls -a; echo hello"
@@ -107,7 +143,10 @@ void Parser::parse()
 					//RODNEY TODO:
 					// if user puts "ls -a;echo hello"
 					// temp2 will have ls and temp3 will hold the -a then concat them together
+					i++;
+					k++;
 				}
+				
 				else
 				{
 					// ALLLL THISSSSSSSSSSSSSSSSSSSSS IN THE "ELSE" branch
