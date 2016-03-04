@@ -105,14 +105,8 @@ void Parser::parse()
 				if((temp[i].find(";") != 0 && temp[i].find(";") != temp.size() - 1))
 				{
 					//RODNEY TODO:
-					string temp3;
 					// if user puts "ls -a;echo hello"
 					// temp2 will have ls and temp3 will hold the -a then concat them together
-					int pos = temp[i].find(";");
-					
-					cout << "THIS IS TEMP: " << temp2 << endl;
-					cout << "Goes in here" << endl;
-					cout << "What is in cmd" << endl;
 				}
 				else
 				{
