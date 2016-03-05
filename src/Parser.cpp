@@ -68,22 +68,31 @@ void Parser::parse()
 		temp[temp.size() - 1] = temp[temp.size() - 1].substr(0, index);
 	}
 
+//TODO: TESTS
+/*
 	// checks for tests
 	unsigned n = 0;
-	for (; n < temp.size(); n++)
+	for (; i < temp.size(); i++)
 	{
-		if (temp[n] == "test")
+		if (temp[i] == "test")
 		{
+			cout << "test detected." << endl;
+			n = i;
 			while ((temp[n] != "&&") || (temp[n] != ";") || (temp[n] != "||") || (temp[n] != "\n"))
 			{
-				temp.push_back(temp[n]);
+				cout << "WORKS HERE !" << endl;
+				test.push_back(temp[n]);
+				cout << "WORKS HERE" << endl;
 				n++;
+				if (n > temp.size())
+					break;
 			}
 			cout << "finishes this i ugess" << endl;
 		}
 		// checks for brackets
-		if (temp[n] == "[")
+		if (temp[i] == "[")
 		{
+			n = i;
 			// gets everything until the end of the bracket
 			while(temp[n] != "]")
 			{
@@ -102,8 +111,11 @@ void Parser::parse()
 		cout << test[i] << endl;
 	
 	cout << "-------------------------" << endl;
-	
-	k = i = n;
+
+
+	i = 0;
+*/
+
 	// loop will eventually put a single command
 	// in one element in cmd
 	// i.g. user puts "ls -a; echo hello"
@@ -138,15 +150,32 @@ void Parser::parse()
 				// and put everything(will note as "THIS")
 				// into the "else" statement
 				// --------------------------------------
-				if((temp[i].find(";") != 0 && temp[i].find(";") != temp.size() - 1))
+				if((temp[i].find(";") != 0 && temp[i].find(";") != temp.size() - 1)  ||
+				   (temp[i].find("||") != 0 && temp[i].find("||") != temp.size() - 1) ||
+				   (temp[i].find("&&") != 0 && temp[i].find("&&") != temp.size() - 1))
 				{
 					//RODNEY TODO:
 					// if user puts "ls -a;echo hello"
 					// temp2 will have ls and temp3 will hold the -a then concat them together
-					i++;
-					k++;
+					int pos;
+					if (temp[i].find(";") != string::npos)
+					{
+						pos = temp[i].find(";");
+						temp2 = temp2 + " " + temp[i].substr(0, pos);
+						cout << temp2 << " is being pushed into the vecotr" << endl;
+						cmd.push_back(temp2);
+						cmd.push_back(";");
+						temp2.clear();
+						temp2 = temp[i].substr(pos + 1, string::npos);
+						cout << "new temp2: " << temp2 << endl;
+					}
+					
+					cout << "i: " << i << endl;
+					cout << "k: " << k << endl;
+					//i++;
+					//k++;
+					//break;
 				}
-				
 				else
 				{
 					// ALLLL THISSSSSSSSSSSSSSSSSSSSS IN THE "ELSE" branch
@@ -231,7 +260,10 @@ void Parser::parse()
 		// adds single command as an element in CMD
 		// unless it's a comment xD
 		if(!temp2.empty())
+		{
+			cout << temp2 << " is being pushed into the vector" << endl;
 			cmd.push_back(temp2);
+		}
 
 		if(isSemiColon)
 		{
@@ -257,9 +289,9 @@ void Parser::parse()
 	}
 
 	// using to test to see what is stored in cmd
-	//cout << "cmd vector in Parser after parse: " << endl;
-	//for (unsigned int i = 0; i < cmd.size(); i++)
-	//	cout << cmd.at(i) << endl;
+	cout << "cmd vector in Parser after parse: " << endl;
+	for (unsigned int i = 0; i < cmd.size(); i++)
+		cout << cmd.at(i) << endl;
 
 	return;
 }

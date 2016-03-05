@@ -11,7 +11,7 @@ int main()
 	getlogin_r(loginName, sizeof(loginName));
 	gethostname(hostName, sizeof(hostName));
 	string cmd;
-	int status;
+	int status = 0;
 
 	do
 	{
@@ -27,7 +27,7 @@ int main()
 		p.parse();
 		
 		Shell_Base* b = &p;
-		status = b->execute();
+		//status = b->execute();
 		b->clear();
 		
 		if (status == -1)
