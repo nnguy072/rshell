@@ -139,107 +139,66 @@ void Parser::parse()
 				break;
 			}
 			// this means you if you find ";" or "||" or "&&"
-			else if((temp[i].find(";") != string::npos)||
+			if((temp[i].find(";") != string::npos)||
 				(temp[i].find("||") != string::npos)||
 				(temp[i].find("&&") != string::npos))
 			{
-				// --------------------------------------
-				// TODO: add if statement that parses 
-				// something like "ls -a;echo hi"
-				// *I would do that ^^^^ in an if statement
-				// and put everything(will note as "THIS")
-				// into the "else" statement
-				// --------------------------------------
-				if((temp[i].find(";") != 0 && temp[i].find(";") != temp.size() - 1)  ||
-				   (temp[i].find("||") != 0 && temp[i].find("||") != temp.size() - 1) ||
-				   (temp[i].find("&&") != 0 && temp[i].find("&&") != temp.size() - 1))
+				if((temp2.empty()) && (temp[i].find(";") != string::npos))
 				{
-					//RODNEY TODO:
-					// if user puts "ls -a;echo hello"
-					// temp2 will have ls and temp3 will hold the -a then concat them together
-					int pos;
-					if (temp[i].find(";") != string::npos)
+					temp2 = temp[i];
+					if(temp2.size() != 1)
 					{
-						pos = temp[i].find(";");
-						temp2 = temp2 + " " + temp[i].substr(0, pos);
-						cout << temp2 << " is being pushed into the vecotr" << endl;
-						cmd.push_back(temp2);
-						cmd.push_back(";");
-						temp2.clear();
-						temp2 = temp[i].substr(pos + 1, string::npos);
-						cout << "new temp2: " << temp2 << endl;
+						temp2 = temp2.substr(0, temp2.size() - 1);
 					}
-					
-					cout << "i: " << i << endl;
-					cout << "k: " << k << endl;
-					//i++;
-					//k++;
-					//break;
+					isSemiColon = true;
 				}
-				else
+				// if it's empty and "||" or "&&"; remove them
+				// and then push back || or &&
+				else if((temp2.empty()) && ((temp[i].find("||") != string::npos) ||
+					                        (temp[i].find("&&") != string::npos)))
 				{
-					// ALLLL THISSSSSSSSSSSSSSSSSSSSS IN THE "ELSE" branch
-					// -----------------------------------------------------------
-					// if empty and ";" remove the ";" and
-					// make a note to push ";" after temp2
-					if((temp2.empty()) && (temp[i].find(";") != string::npos))
+					temp2 = temp[i];
+					if(temp2.size() != 2)
 					{
-						temp2 = temp[i];
-						if(temp2.size() != 1)
-						{
-							temp2 = temp2.substr(0, temp2.size() - 1);
-						}
-						isSemiColon = true;
-					}
-					// if it's empty and "||" or "&&"; remove them
-					// and then push back || or &&
-					else if((temp2.empty()) && ((temp[i].find("||") != string::npos) ||
-					                        	(temp[i].find("&&") != string::npos)))
-					{
-						temp2 = temp[i];
-						if(temp2.size() != 2)
-						{
-							temp2 = temp2.substr(0, temp2.size() - 1);
-							temp2 = temp2.substr(0, temp2.size() - 1);
-						}
-						// makes a note if it's a || or &&
-						if (temp[i].find("||") != string::npos)
-						{
-							isLine = true;
-						}
-						else
-						{
-							isAmpersand = true;
-						}
-					}
-					// if string is not empty
-					else if((temp[i].find("||") != string::npos) ||
-					    	(temp[i].find("&&") != string::npos))
-					{
-						temp2 = temp2 + " " + temp[i];
-						// got to get rid of the "||" or "||"
 						temp2 = temp2.substr(0, temp2.size() - 1);
 						temp2 = temp2.substr(0, temp2.size() - 1);
-						if (temp[i].find("||") != string::npos)
-						{
-							isLine = true;
-						}
-						else
-						{
-							isAmpersand = true;
-						}
+					}
+					// makes a note if it's a || or &&
+					if (temp[i].find("||") != string::npos)
+					{
+						isLine = true;
 					}
 					else
 					{
-						temp2 = temp2 + " " + temp[i];
-						temp2 = temp2.substr(0, temp2.size() - 1);
-						isSemiColon = true;
+						isAmpersand = true;
 					}
-					k++;
-					i++;
-					break;
-					// ----------------------------------------------------
 				}
+				// if string is not empty
+				else if((temp[i].find("||") != string::npos) ||
+					    (temp[i].find("&&") != string::npos))
+				{
+					temp2 = temp2 + " " + temp[i];
+					// got to get rid of the "||" or "||"
+					temp2 = temp2.substr(0, temp2.size() - 1);
+					temp2 = temp2.substr(0, temp2.size() - 1);
+					if (temp[i].find("||") != string::npos)
+					{
+						isLine = true;
+					}
+					else
+					{
+						isAmpersand = true;
+					}
+				}
+				else
+				{
+					temp2 = temp2 + " " + temp[i];
+					temp2 = temp2.substr(0, temp2.size() - 1);
+					isSemiColon = true;
+				}
+				k++;
+				i++;
+				break;
 			}
 			else
 			{
@@ -261,7 +220,6 @@ void Parser::parse()
 		// unless it's a comment xD
 		if(!temp2.empty())
 		{
-			cout << temp2 << " is being pushed into the vector" << endl;
 			cmd.push_back(temp2);
 		}
 
@@ -289,9 +247,9 @@ void Parser::parse()
 	}
 
 	// using to test to see what is stored in cmd
-	cout << "cmd vector in Parser after parse: " << endl;
-	for (unsigned int i = 0; i < cmd.size(); i++)
-		cout << cmd.at(i) << endl;
+	//cout << "cmd vector in Parser after parse: " << endl;
+	//for (unsigned int i = 0; i < cmd.size(); i++)
+	//	cout << cmd.at(i) << endl;
 
 	return;
 }
