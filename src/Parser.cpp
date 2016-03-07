@@ -68,53 +68,6 @@ void Parser::parse()
 		temp[temp.size() - 1] = temp[temp.size() - 1].substr(0, index);
 	}
 
-//TODO: TESTS
-/*
-	// checks for tests
-	unsigned n = 0;
-	for (; i < temp.size(); i++)
-	{
-		if (temp[i] == "test")
-		{
-			cout << "test detected." << endl;
-			n = i;
-			while ((temp[n] != "&&") || (temp[n] != ";") || (temp[n] != "||") || (temp[n] != "\n"))
-			{
-				cout << "WORKS HERE !" << endl;
-				test.push_back(temp[n]);
-				cout << "WORKS HERE" << endl;
-				n++;
-				if (n > temp.size())
-					break;
-			}
-			cout << "finishes this i ugess" << endl;
-		}
-		// checks for brackets
-		if (temp[i] == "[")
-		{
-			n = i;
-			// gets everything until the end of the bracket
-			while(temp[n] != "]")
-			{
-				cout << temp[n] << " is being pushed." << endl;
-				test.push_back(temp[n]);
-				cout << temp[n] << " has been pushed." << endl;
-				n++;
-			}
-			test.push_back(temp[n]);	// includes the closing "]"
-			n++;						// increment so n is position after the closing bracket
-		}
-	}
-
-	cout << "This is what is in testing" << endl;
-	for (unsigned int i = 0; i <test.size(); i++)
-		cout << test[i] << endl;
-	
-	cout << "-------------------------" << endl;
-
-
-	i = 0;
-*/
 
 	// loop will eventually put a single command
 	// in one element in cmd
@@ -124,6 +77,57 @@ void Parser::parse()
 	{
 		for ( ;i < temp.size(); i++)
 		{
+			if (temp[i] == "test")
+			{
+				unsigned n = i;
+				temp2 = temp[i];
+				// if i is at the last position then break;
+				if ( i == temp.size() - 1)
+				{
+					cmd.push_back("[");
+					cout << "pushing into test vector 1" << endl;
+					test.push_back(temp2);
+					n++;
+					i = n;
+					k = i;
+					temp2.clear();
+					break;
+				}
+				n++;
+				// if "-" is found on the next iteration then it must be a flag
+				if (temp[n].find("-") != string::npos)
+				{
+					temp2 = temp2 + " " + temp[n]; // temp2 should now have "test -e"
+					cout << "temp inside flag if: " << temp2 << endl;
+					// if n is currently in the last position then break
+					if (n == temp.size() - 1)
+					{
+						cmd.push_back("[");
+						cout << "pushing into test vector" << endl;
+						test.push_back(temp2);
+						n++;
+						i = n;
+						k = i;
+						temp2.clear();
+						break;
+					}
+					n++;
+				}
+
+				// if there is no "-" then it's something to check
+				// in this case n can be i + 1 if theres no flag, or n + 2 if there is
+				temp2 = temp2 + " " + temp[n];
+				cout << "temp2 after another parse: " << temp2 << endl;
+
+				cout << "Temp2 being pushed into test vector: " << temp2 << endl;
+				cmd.push_back("[");
+				test.push_back(temp2);
+				n++;
+				i = n;
+				k = i;
+				temp2.clear();
+				break;
+			}
 			// if it is a single connector do this
 			if((temp[i] == ";") || (temp[i] == "||") || (temp[i] == "&&"))
 			{
@@ -247,9 +251,13 @@ void Parser::parse()
 	}
 
 	// using to test to see what is stored in cmd
-	//cout << "cmd vector in Parser after parse: " << endl;
-	//for (unsigned int i = 0; i < cmd.size(); i++)
-	//	cout << cmd.at(i) << endl;
+	cout << "cmd vector in Parser after parse: " << endl;
+	for (unsigned int i = 0; i < cmd.size(); i++)
+		cout << cmd.at(i) << endl;
+
+	cout << "test vector in Parser after parse: " << endl;
+	for (unsigned int i = 0; i < test.size(); i++)
+		cout << test.at(i) << endl;
 
 	return;
 }
