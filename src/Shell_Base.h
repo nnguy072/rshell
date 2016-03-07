@@ -8,6 +8,7 @@ class Shell_Base
 {
 	protected:
 		static vector<string> cmd;
+		static vector<string> test;
 	public:
 		void clear();
 		virtual int execute() = 0;

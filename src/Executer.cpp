@@ -4,7 +4,9 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
 #include <boost/algorithm/string.hpp>
+#include <sys/stat.h>
 #include <cstdio>
 using namespace std;
 
@@ -12,6 +14,7 @@ using namespace std;
 Executer::Executer()
 {
 	// does nothing
+	testCount = 0;
 }
 
 Executer::Executer(int i)
@@ -24,9 +27,19 @@ void Executer::setCount(const int& i)
 	count = i;
 }
 
+void Executer::setTestCount(const int& i)
+{
+	testCount = i;
+}
+
 int Executer::getCount()
 {
 	return count;
+}
+
+int Executer::getTestCount()
+{
+	return testCount;
 }
 
 char* Executer::convert(const string &s)
@@ -110,6 +123,91 @@ int Executer::execute()
 	if (cmd.at(getCount()).find("exit") != string::npos)
 	{
 		return -1;
+	}
+	if (cmd.at(getCount()) == "[")
+	{
+		vector<string> test_temp;
+		boost::split(test_temp, test[getTestCount()], boost::is_any_of(" "));
+		struct stat info;
+
+		// if it's only "test" in the test vector do nothing
+		if(test_temp.size() == 1)
+		{
+			return 0;
+		}
+		// if you can find a "-" aka flag
+		if(test_temp[1].find("-") != string::npos)
+		{
+			if(test_temp[1] == "-e")
+			{
+				string pathname = test_temp[1];
+				bool existFile = S_ISREG(info.st_mode);
+				bool existDir = S_ISDIR(info.st_mode);
+				if(existFile || existDir)
+				{
+					cout << "(true)" << endl;
+					testCount++;
+					return 0;
+				}
+				else
+				{
+					cout << "(false)" << endl;
+					testCount++;
+					return 149;
+				}
+			}
+			else if(test_temp[1] == "-f")
+			{
+				string pathname = test_temp[2];
+				if(stat(pathname.c_str(), &info) != 0 && S_ISREG(info.st_mode))
+				{
+					cout << "(true)" << endl;
+					testCount++;
+					return 0;
+				}
+				else
+				{
+					cout << "(false)" << endl;
+					testCount++;
+					return 149;
+				}
+			}
+			else if(test_temp[1] == "-d")
+			{
+				string pathname = test_temp[2];
+				if (stat(pathname.c_str(), &info) != 0 && S_ISDIR(info.st_mode))
+				{
+					cout << "(true)" << endl;
+					testCount++;
+					return 0;
+				}
+				else
+				{
+					cout << "(false)" << endl;
+					testCount++;
+					return 149;
+				}
+				
+			}
+		}
+		// no flags
+		else
+		{
+			string pathname = test[1];
+			bool existDir = S_ISDIR(info.st_mode);
+			if(existDir)
+			{
+				cout << "(true)" << endl;
+				testCount++;
+				return 0;
+			}
+			else
+			{
+				cout << "(false)" << endl;
+				testCount++;
+				return 149;
+			}
+		}
 	}
 	char** arg = makeArg(vCStr, getCount());
 	int status;

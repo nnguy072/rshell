@@ -18,7 +18,6 @@ void Parser::setCommand(string &c)
 void Parser::parse()
 {
 	vector<string> temp;			// vector that holds original command
-	vector<string> test;			// vector that holds things to be tested
 	string temp2;					// used to hold individual words that i parsed to push into temp
 	//string temp3;					// used for the case "hello;hello" when connector is in the middle
 	unsigned int i = 0;				// keeps track of for loop inside
@@ -85,7 +84,6 @@ void Parser::parse()
 				if ( i == temp.size() - 1)
 				{
 					cmd.push_back("[");
-					cout << "pushing into test vector 1" << endl;
 					test.push_back(temp2);
 					n++;
 					i = n;
@@ -98,12 +96,10 @@ void Parser::parse()
 				if (temp[n].find("-") != string::npos)
 				{
 					temp2 = temp2 + " " + temp[n]; // temp2 should now have "test -e"
-					cout << "temp inside flag if: " << temp2 << endl;
 					// if n is currently in the last position then break
 					if (n == temp.size() - 1)
 					{
 						cmd.push_back("[");
-						cout << "pushing into test vector" << endl;
 						test.push_back(temp2);
 						n++;
 						i = n;
@@ -117,9 +113,7 @@ void Parser::parse()
 				// if there is no "-" then it's something to check
 				// in this case n can be i + 1 if theres no flag, or n + 2 if there is
 				temp2 = temp2 + " " + temp[n];
-				cout << "temp2 after another parse: " << temp2 << endl;
 
-				cout << "Temp2 being pushed into test vector: " << temp2 << endl;
 				cmd.push_back("[");
 				test.push_back(temp2);
 				n++;
@@ -127,6 +121,73 @@ void Parser::parse()
 				k = i;
 				temp2.clear();
 				break;
+			}
+			
+			if (temp[i] == "[")
+			{
+				bool endBracket = false;
+				unsigned n = i;
+				temp2 = "test";
+				i = n;
+				if(i == temp.size() - 1)
+				{
+					cout << "-bash: [: missing ']'" << endl;
+					n++;
+					i = n;
+					k = i;
+					break;
+				}
+				n++;
+				// checks if next one is a flag
+				if(temp[n].find("-") != string::npos)
+				{
+					temp2 = temp2 + " " + temp[n];
+					if (n == temp.size() - 1)
+					{
+						cout << "-bash: [: missing ']'" << endl;
+						n++;
+						i = n;
+						k = i;
+						break;
+					}
+					n++;
+				}
+				temp2 = temp2 + " " + temp[n];
+				if(n == temp.size() -1)
+				{
+					cout << "-bash: [: missing ']'" << endl;
+					n++;
+					i = n;
+					k = i;
+					break;
+				}
+				n++;
+				if (n > temp.size())
+				{
+					break;
+				}
+				// if the next is an endbracket then it's good
+				if(temp[n] == "]")
+					endBracket = true;
+				
+				if(endBracket)
+				{
+					cmd.push_back("[");
+					test.push_back(temp2);
+					n++;
+					i = n;
+					k = i;
+					temp2.clear();
+					break;
+				}
+				else
+				{
+					cout << "-bash: [: missing ']'" << endl;
+					n++;
+					i = n;
+					k = i;
+					break;
+				}
 			}
 			// if it is a single connector do this
 			if((temp[i] == ";") || (temp[i] == "||") || (temp[i] == "&&"))
@@ -141,7 +202,7 @@ void Parser::parse()
 				k++;
 				i++;
 				break;
-			}
+			}		
 			// this means you if you find ";" or "||" or "&&"
 			if((temp[i].find(";") != string::npos)||
 				(temp[i].find("||") != string::npos)||
@@ -251,13 +312,13 @@ void Parser::parse()
 	}
 
 	// using to test to see what is stored in cmd
-	cout << "cmd vector in Parser after parse: " << endl;
-	for (unsigned int i = 0; i < cmd.size(); i++)
-		cout << cmd.at(i) << endl;
+	//cout << "cmd vector in Parser after parse: " << endl;
+	//for (unsigned int i = 0; i < cmd.size(); i++)
+	//	cout << cmd.at(i) << endl;
 
-	cout << "test vector in Parser after parse: " << endl;
-	for (unsigned int i = 0; i < test.size(); i++)
-		cout << test.at(i) << endl;
+	//cout << "test vector in Parser after parse: " << endl;
+	//for (unsigned int i = 0; i < test.size(); i++)
+	//	cout << test.at(i) << endl;
 
 	return;
 }
@@ -286,6 +347,12 @@ int Parser::execute()
 	//for(unsigned int i = 0; i < cmd.size(); i++)
 	//	cout << i << ": " << cmd.at(i) << endl;
 
+	//for(unsigned int i = 0; i < test.size(); i++)
+	//	cout << test[i] << endl;
+
+	//for(unsigned int i = 0; i < cmd.size(); i++)
+	//	cout << cmd[i] << endl;
+
 	// this loop analyzes the connectors
 	// and determines what gets runned
 	while(i < cmd.size())
@@ -298,12 +365,10 @@ int Parser::execute()
 		{						// so we want to exit rshell program
 			return status;
 		}
-		//cout << "hi" << endl;
 		// should on on connector now
 		// b/c connectors are on odd numbers
 		i++;	
 		
-		//cout << "i:" << i << endl;
 		if(i >= cmd.size())
 		{
 			return status;

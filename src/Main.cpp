@@ -27,7 +27,7 @@ int main()
 		p.parse();
 		
 		Shell_Base* b = &p;
-		//status = b->execute();
+		status = b->execute();
 		b->clear();
 		
 		if (status == -1)

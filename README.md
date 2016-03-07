@@ -24,10 +24,14 @@ if the first command is successful. The "||" command states the next command wil
 LIST OF KNOWN BUGS
 ---
 * Connectors need to follow conventional rules
-* ls -a;echo "hello" will not parase correctly; however, ls -a; echo "hello"
+* ls -a;echo "hello" will not parase correctly; however, ls -a; echo "hello" does not work
 * Not all commands in bash have been tested
 * Commands that are built-in to bash will not work (e.g. cd)
 * ls is not color coded (All types of items in the directory are the same color)
+* Precedence does not work; however a test has been written for it
+* Test/[] sometimes does not work correctly(prints out false even if true)
+* When using Test/[] the semi colon ";" can't be next to the command
+* EX: test -e /path/name ; NOT test -e /path/name;
 
 LANGUAGE USED
 ---
