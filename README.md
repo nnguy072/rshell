@@ -3,9 +3,9 @@ COMMAND RSHELL
 
 AUTHORS
 ---
-Rodney Ho
-
 Nam Nguyen
+
+Rodney Ho
 
 CONTENTS
 ---
